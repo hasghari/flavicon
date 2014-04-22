@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/hasghari/flavicon.png?branch=master)](https://travis-ci.org/hasghari/flavicon)
+[![Code Climate](https://codeclimate.com/github/hasghari/flavicon.png)](https://codeclimate.com/github/hasghari/flavicon)
+[![Gem Version](https://badge.fury.io/rb/flavicon.png)](http://badge.fury.io/rb/flavicon)
+
 # flavicon
 
 Disclaimer: This is a rewrite of the [www-favicon](https://github.com/youpy/www-favicon) gem for a couple reasons:
