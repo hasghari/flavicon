@@ -2,11 +2,39 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'flavicon/finder'
 
 describe Flavicon::Finder do
+  def html(file)
+    File.read(File.expand_path(File.dirname(__FILE__) + "/../fixtures/#{file}"))
+  end
+
   subject { Flavicon::Finder.new('http://www.ex.com') }
 
   describe '#find' do
-    it '' do
+    it 'should delegate to #request' do
+      response = double('response', body: html('absolute.html'))
+      subject.should_receive(:request).with('http://www.ex.com').and_return([response, 'http://www.other.com'])
+      subject.should_receive(:valid_favicon_url?).and_return(true)
+      subject.find
+    end
 
+    it 'should extract favicon from body' do
+      response = double('response', body: html('absolute.html'))
+      subject.should_receive(:request).with('http://www.ex.com').and_return([response, 'http://www.other.com'])
+      subject.should_receive(:valid_favicon_url?).with('http://sub.example.com/absolute.ico').and_return(true)
+      subject.find.should == 'http://sub.example.com/absolute.ico'
+    end
+
+    it 'should fallback to default when response is empty' do
+      response = double('response', body: '')
+      subject.should_receive(:request).with('http://www.ex.com').and_return([response, 'http://www.other.com'])
+      subject.should_receive(:valid_favicon_url?).with('http://www.other.com/favicon.ico').and_return(true)
+      subject.find.should == 'http://www.other.com/favicon.ico'
+    end
+
+    it 'should return nil when not valid' do
+      response = double('response', body: html('absolute.html'))
+      subject.should_receive(:request).with('http://www.ex.com').and_return([response, 'http://www.other.com'])
+      subject.should_receive(:valid_favicon_url?).and_return(false)
+      subject.find.should be_nil
     end
   end
 
@@ -56,10 +84,6 @@ describe Flavicon::Finder do
   end
 
   describe '#extract_from_html' do
-    def html(file)
-      File.read(File.expand_path(File.dirname(__FILE__) + "/../fixtures/#{file}"))
-    end
-
     it 'should return nil for empty body' do
       subject.extract_from_html('', 'http://www.ex.com').should be_nil
     end
@@ -84,6 +108,24 @@ describe Flavicon::Finder do
     end
   end
 
+  describe '#default_path' do
+    it 'should return default favicon url' do
+      subject.default_path('http://www.basic.com').should == 'http://www.basic.com/favicon.ico'
+    end
+
+    it 'ignores query and fragment' do
+      subject.default_path('http://www.basic.com?query=a#fragment').should == 'http://www.basic.com/favicon.ico'
+    end
+
+    it 'ignores path with no trailing slash' do
+      subject.default_path('http://www.basic.com/basic').should == 'http://www.basic.com/favicon.ico'
+    end
+
+    it 'ignores path with trailing slash' do
+      subject.default_path('http://www.basic.com/basic/').should == 'http://www.basic.com/favicon.ico'
+    end
+  end
+
   describe '#request' do
     before do
       stub_request(:get, 'http://www.ex.com/abc/')
@@ -100,6 +142,21 @@ describe Flavicon::Finder do
       response, url = subject.request('http://www.ex.com/abc/')
       response.should be_a Net::HTTPSuccess
       url.should == 'http://www.ex.com/abc/'
+    end
+
+    context 'ssl' do
+      before do
+        stub_request(:get, 'http://secure.ex.com:443/abc/')
+          .to_return(status: 200, body: '', headers: {})
+      end
+
+      it 'should set http secure state' do
+        Net::HTTP.any_instance.should_receive(:use_ssl=).with(true)
+        Net::HTTP.any_instance.should_receive(:verify_mode=).with(OpenSSL::SSL::VERIFY_NONE)
+        response, url = subject.request('https://secure.ex.com/abc/')
+        response.should be_a Net::HTTPSuccess
+        url.should == 'https://secure.ex.com/abc/'
+      end
     end
 
     context 'redirect' do
