@@ -1,4 +1,5 @@
 require 'simplecov'
+require 'coveralls'
 
 module SimpleCov::Configuration
   def clean_filters
@@ -11,9 +12,15 @@ SimpleCov.configure do
   load_profile 'test_frameworks'
 end
 
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
+
 ENV['COVERAGE'] && SimpleCov.start do
   add_filter '/.rvm/'
 end
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 

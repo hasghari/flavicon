@@ -12,4 +12,5 @@ group :development do
   gem 'jeweler', '~> 2.0'
   gem 'simplecov', '~> 0'
   gem 'pry', '~> 0'
+  gem 'coveralls'
 end
