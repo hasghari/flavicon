@@ -9,12 +9,13 @@ module Flavicon
     def find
       response, resolved = request(url)
       favicon_url = extract_from_html(response.body, resolved) || default_path(resolved)
-      valid_favicon_url?(favicon_url) ? favicon_url : nil
+      verify_favicon_url(favicon_url)
     end
 
-    def valid_favicon_url?(url)
-      response, _ = request(url)
-      response.is_a?(Net::HTTPSuccess) && response.body.to_s != '' && response.content_type =~ /image/i
+    def verify_favicon_url(url)
+      response, resolved = request(url)
+      return unless response.is_a?(Net::HTTPSuccess) && response.body.to_s != '' && response.content_type =~ /image/i
+      resolved
     end
 
     def extract_from_html(html, url)

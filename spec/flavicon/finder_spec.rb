@@ -12,33 +12,35 @@ describe Flavicon::Finder do
     it 'should delegate to #request' do
       response = double('response', body: html('absolute.html'))
       subject.should_receive(:request).with('http://www.ex.com').and_return([response, 'http://www.other.com'])
-      subject.should_receive(:valid_favicon_url?).and_return(true)
+      subject.should_receive(:verify_favicon_url).and_return('http://sub.example.com/absolute.ico')
       subject.find
     end
 
     it 'should extract favicon from body' do
       response = double('response', body: html('absolute.html'))
       subject.should_receive(:request).with('http://www.ex.com').and_return([response, 'http://www.other.com'])
-      subject.should_receive(:valid_favicon_url?).with('http://sub.example.com/absolute.ico').and_return(true)
+      subject.should_receive(:verify_favicon_url).with('http://sub.example.com/absolute.ico')
+        .and_return('http://sub.example.com/absolute.ico')
       subject.find.should == 'http://sub.example.com/absolute.ico'
     end
 
     it 'should fallback to default when response is empty' do
       response = double('response', body: '')
       subject.should_receive(:request).with('http://www.ex.com').and_return([response, 'http://www.other.com'])
-      subject.should_receive(:valid_favicon_url?).with('http://www.other.com/favicon.ico').and_return(true)
+      subject.should_receive(:verify_favicon_url).with('http://www.other.com/favicon.ico')
+        .and_return('http://www.other.com/favicon.ico')
       subject.find.should == 'http://www.other.com/favicon.ico'
     end
 
     it 'should return nil when not valid' do
       response = double('response', body: html('absolute.html'))
       subject.should_receive(:request).with('http://www.ex.com').and_return([response, 'http://www.other.com'])
-      subject.should_receive(:valid_favicon_url?).and_return(false)
+      subject.should_receive(:verify_favicon_url).and_return(nil)
       subject.find.should be_nil
     end
   end
 
-  describe '#valid_favicon_url?' do
+  describe '#verify_favicon_url' do
     let(:favicon_url) { 'http://www.ex.com/favicon.ico' }
     let(:response) do
       { status: 200, body: 'blah', headers: { 'Content-Type' => 'image/x-icon'} }
@@ -48,8 +50,8 @@ describe Flavicon::Finder do
       stub_request(:get, favicon_url).to_return(response)
     end
 
-    it 'should be true by default' do
-      subject.valid_favicon_url?(favicon_url).should be_true
+    it 'should return favicon url' do
+      subject.verify_favicon_url(favicon_url).should == favicon_url
     end
 
     context 'http failure' do
@@ -57,8 +59,8 @@ describe Flavicon::Finder do
         { status: 400, body: 'blah', headers: { 'Content-Type' => 'image/x-icon'} }
       end
 
-      it 'should be false' do
-        subject.valid_favicon_url?(favicon_url).should be_false
+      it 'should return nil' do
+        subject.verify_favicon_url(favicon_url).should be_nil
       end
     end
 
@@ -67,8 +69,8 @@ describe Flavicon::Finder do
         { status: 200, body: '', headers: { 'Content-Type' => 'image/x-icon'} }
       end
 
-      it 'should be false' do
-        subject.valid_favicon_url?(favicon_url).should be_false
+      it 'should return nil' do
+        subject.verify_favicon_url(favicon_url).should be_nil
       end
     end
 
@@ -77,8 +79,8 @@ describe Flavicon::Finder do
         { status: 200, body: 'blah', headers: { 'Content-Type' => 'text/javascript'} }
       end
 
-      it 'should be false' do
-        subject.valid_favicon_url?(favicon_url).should be_false
+      it 'should return nil' do
+        subject.verify_favicon_url(favicon_url).should be_nil
       end
     end
   end
