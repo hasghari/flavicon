@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'nokogiri', '~> 1.6'
+gem 'nokogiri', '~> 1.8'
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
