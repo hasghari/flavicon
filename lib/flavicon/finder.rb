@@ -1,10 +1,18 @@
+# frozen_string_literal: true
+
 module Flavicon
-  class Finder < Struct.new(:url)
+  class Finder
     require 'uri'
     require 'net/http'
     require 'nokogiri'
 
     TooManyRedirects = Class.new(StandardError)
+
+    attr_reader :url
+
+    def initialize(url)
+      @url = url
+    end
 
     def find
       response, resolved = request(url)
@@ -15,12 +23,13 @@ module Flavicon
     def verify_favicon_url(url)
       response, resolved = request(url)
       return unless response.is_a?(Net::HTTPSuccess) && response.body.to_s != '' && response.content_type =~ /image/i
+
       resolved
     end
 
     def extract_from_html(html, url)
-      link = Nokogiri::HTML(html).css('head link').find do |link|
-        link[:rel] =~ /\A(shortcut )?icon\z/i
+      link = Nokogiri::HTML(html).css('head link').find do |node|
+        node[:rel] =~ /\A(shortcut )?icon\z/i
       end
 
       URI.join(url, link[:href]).to_s if link
@@ -30,8 +39,9 @@ module Flavicon
       URI.join(url, '/favicon.ico').to_s
     end
 
+    # rubocop:disable Metrics/AbcSize,MethodLength
     def request(url, limit = 10)
-      raise TooManyRedirects if limit < 0
+      raise TooManyRedirects if limit.negative?
 
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -47,9 +57,10 @@ module Flavicon
       if response.is_a? Net::HTTPRedirection
         request(extract_location(response, url), limit - 1)
       else
-        return response, url
+        [response, url]
       end
     end
+    # rubocop:enable Metrics/AbcSize,MethodLength
 
     # While the soon-to-be obsolete IETF standard RFC 2616 (HTTP 1.1) requires a complete absolute URI for redirection,
     # the most popular web browsers tolerate the passing of a relative URL as the value for a Location header field.

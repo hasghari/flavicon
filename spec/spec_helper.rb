@@ -1,25 +1,7 @@
+# frozen_string_literal: true
+
 require 'simplecov'
-require 'coveralls'
-
-module SimpleCov::Configuration
-  def clean_filters
-    @filters = []
-  end
-end
-
-SimpleCov.configure do
-  clean_filters
-  load_profile 'test_frameworks'
-end
-
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
-]
-
-ENV['COVERAGE'] && SimpleCov.start do
-  add_filter '/.rvm/'
-end
+SimpleCov.start
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
@@ -30,11 +12,3 @@ require 'pry'
 
 require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
-
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
-
-RSpec.configure do |config|
-  config.order = 'random'
-end
