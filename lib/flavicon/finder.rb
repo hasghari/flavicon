@@ -39,7 +39,7 @@ module Flavicon
       URI.join(url, '/favicon.ico').to_s
     end
 
-    # rubocop:disable Metrics/AbcSize,MethodLength
+    # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
     def request(url, limit = 10)
       raise TooManyRedirects if limit.negative?
 
@@ -60,7 +60,7 @@ module Flavicon
         [response, url]
       end
     end
-    # rubocop:enable Metrics/AbcSize,MethodLength
+    # rubocop:enable Metrics/AbcSize,Metrics/MethodLength
 
     # While the soon-to-be obsolete IETF standard RFC 2616 (HTTP 1.1) requires a complete absolute URI for redirection,
     # the most popular web browsers tolerate the passing of a relative URL as the value for a Location header field.

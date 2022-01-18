@@ -1,0 +1,25 @@
+name: Linters
+
+on: [pull_request]
+
+jobs:
+  ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+
+      - name: RuboCop Linter
+        uses: reviewdog/action-rubocop@v2.1.0
+        with:
+          rubocop_version: gemfile
+          rubocop_extensions: rubocop-rspec:gemfile
+          rubocop_flags: '--parallel --force-exclusion'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Brakeman Linter
+        uses: reviewdog/action-brakeman@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
