@@ -16,8 +16,10 @@ module Flavicon
 
     def find
       response, resolved = request(url)
-      favicon_url = extract_from_html(response.body, resolved) || default_path(resolved)
-      verify_favicon_url(favicon_url)
+
+      extract_from_html(response.body, resolved)
+        .push(default_path(resolved))
+        .find { |url| verify_favicon_url(url) }
     end
 
     def verify_favicon_url(url)
@@ -28,11 +30,9 @@ module Flavicon
     end
 
     def extract_from_html(html, url)
-      link = Nokogiri::HTML(html).css('head link').find do |node|
-        node[:rel] =~ /\A(shortcut )?icon\z/i
+      Nokogiri::HTML(html).css('head link').filter_map do |node|
+        URI.join(url, node[:href]).to_s if node[:rel] =~ /\A(shortcut )?icon\z/i
       end
-
-      URI.join(url, link[:href]).to_s if link
     end
 
     def default_path(url)

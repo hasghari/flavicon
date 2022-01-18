@@ -88,25 +88,27 @@ describe Flavicon::Finder do
 
   describe '#extract_from_html' do
     it 'returns nil for empty body' do
-      expect(finder.extract_from_html('', 'http://www.ex.com')).to be_nil
+      expect(finder.extract_from_html('', 'http://www.ex.com')).to eq []
     end
 
     it 'returns nil if no favicon found' do
-      expect(finder.extract_from_html(html('missing.html'), 'http://www.ex.com')).to be_nil
+      expect(finder.extract_from_html(html('missing.html'), 'http://www.ex.com')).to eq []
     end
 
     it 'handles absolute url' do
       expect(finder.extract_from_html(html('absolute.html'), 'http://www.ex.com'))
-        .to eq('http://sub.example.com/absolute.ico')
+        .to eq(['http://sub.example.com/absolute.ico'])
     end
 
     it 'handles relative url' do
       expect(finder.extract_from_html(html('relative.html'), 'http://www.ex.com'))
-        .to eq('http://www.ex.com/relative.ico')
+        .to eq(['http://www.ex.com/relative.ico'])
     end
 
-    it 'returns first if multiple matches' do
-      expect(finder.extract_from_html(html('multiple.html'), 'http://www.ex.com')).to eq 'http://www.ex.com/first.ico'
+    it 'returns multiple matches' do
+      expect(finder.extract_from_html(html('multiple.html'), 'http://www.ex.com')).to(
+        eq(%w(http://www.ex.com/first.ico http://www.ex.com/second.ico))
+      )
     end
   end
 
