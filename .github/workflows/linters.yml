@@ -18,8 +18,3 @@ jobs:
           rubocop_extensions: rubocop-rspec:gemfile
           rubocop_flags: '--parallel --force-exclusion'
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Brakeman Linter
-        uses: reviewdog/action-brakeman@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
