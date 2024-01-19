@@ -14,8 +14,7 @@ describe Flavicon::Finder do
     let(:response) { instance_double(Net::HTTPResponse, body: html('absolute.html')) }
 
     before do
-      allow(finder).to receive(:request).and_return([response, 'http://www.other.com'])
-      allow(finder).to receive(:verify_favicon_url).and_return(favicon_url)
+      allow(finder).to receive_messages(request: [response, 'http://www.other.com'], verify_favicon_url: favicon_url)
     end
 
     it 'delegates to #request' do
