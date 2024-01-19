@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hasghari/flavicon.svg?branch=master)](https://travis-ci.org/hasghari/flavicon)
+[![Build Status](https://github.com/hasghari/flavicon/actions/workflows/ruby.yml/badge.svg)](https://travis-ci.org/hasghari/flavicon)
 [![Maintainability](https://api.codeclimate.com/v1/badges/41fbe1dc447fe0deb33a/maintainability)](https://codeclimate.com/github/hasghari/flavicon/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/41fbe1dc447fe0deb33a/test_coverage)](https://codeclimate.com/github/hasghari/flavicon/test_coverage)
 [![Gem Version](https://badge.fury.io/rb/flavicon.svg)](http://badge.fury.io/rb/flavicon)

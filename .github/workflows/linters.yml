@@ -6,13 +6,13 @@ jobs:
   ruby:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
 
       - name: RuboCop Linter
-        uses: reviewdog/action-rubocop@v2.1.0
+        uses: reviewdog/action-rubocop@v2
         with:
           rubocop_version: gemfile
           rubocop_extensions: rubocop-rspec:gemfile

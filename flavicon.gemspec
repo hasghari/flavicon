@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.homepage = 'https://github.com/hasghari/flavicon'
   spec.license = 'MIT'
 
-  spec.required_ruby_version = '>= 2.7'
+  spec.required_ruby_version = '>= 3.0'
   spec.metadata['rubygems_mfa_required'] = 'true'
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
@@ -24,11 +24,4 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'nokogiri', '~> 1.10'
-
-  spec.add_development_dependency 'bundler', '~> 2.0'
-  spec.add_development_dependency 'pry', '~> 0'
-  spec.add_development_dependency 'rspec', '~> 3.8'
-  spec.add_development_dependency 'rubocop-rspec', '~> 2'
-  spec.add_development_dependency 'simplecov', '~> 0.21'
-  spec.add_development_dependency 'webmock', '~> 3.6'
 end
