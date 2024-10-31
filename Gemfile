@@ -6,6 +6,7 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'bundler'
+gem 'ostruct'
 gem 'pry'
 gem 'rspec'
 gem 'rubocop-rspec'
