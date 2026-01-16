@@ -13,6 +13,7 @@ jobs:
           - 3.2
           - 3.3
           - 3.4
+          - 4.0
 
     steps:
       - uses: actions/checkout@v4
@@ -24,9 +25,5 @@ jobs:
           bundler-cache: true
 
       - name: Run tests with RSpec
-        uses: paambaati/codeclimate-action@v5.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: bundle exec rspec
-          debug: false
+        run: | 
+          bundle exec rspec
