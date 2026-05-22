@@ -6,7 +6,8 @@ module Flavicon
     require 'net/http'
     require 'nokogiri'
 
-    TooManyRedirects = Class.new(StandardError)
+    class TooManyRedirects < StandardError
+    end
 
     attr_reader :url
 
